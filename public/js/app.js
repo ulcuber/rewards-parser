@@ -1900,9 +1900,31 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     RewardsListItem: _RewardsListItem__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
+  data: function data() {
+    return {
+      sortField: 'id',
+      sortOrder: 'asc'
+    };
+  },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('rewards', {
     rewards: 'getData'
-  })),
+  }), {
+    sortedRewards: function sortedRewards() {
+      var _this = this;
+
+      return Array.isArray(this.rewards) ? this.rewards.concat().sort(function (a, b) {
+        if (Number(a[_this.sortField]) < Number(b[_this.sortField])) {
+          return _this.sortOrder === 'asc' ? -1 : 1;
+        }
+
+        if (Number(a[_this.sortField]) > Number(b[_this.sortField])) {
+          return _this.sortOrder === 'asc' ? 1 : -1;
+        }
+
+        return 0;
+      }) : [];
+    }
+  }),
   created: function created() {
     this.fetchRewards();
   },
@@ -1917,14 +1939,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateReward: 'updateItem'
   }), {
     listenSocket: function listenSocket() {
-      var _this = this;
+      var _this2 = this;
 
       _utils_socket__WEBPACK_IMPORTED_MODULE_1__["default"].channel('rewards').listen('RewardAmountUpdatedEvent', function (event) {
-        _this.updateReward(event.reward);
+        _this2.updateReward(event.reward);
       });
     },
     leaveSocket: function leaveSocket() {
       _utils_socket__WEBPACK_IMPORTED_MODULE_1__["default"].leave('rewards');
+    },
+    toggleSort: function toggleSort(field) {
+      if (this.sortField === field) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+      }
     }
   })
 });
@@ -30902,11 +30931,54 @@ var render = function() {
       "table",
       { staticClass: "table table-condensed table-striped table-hover" },
       [
-        _vm._m(0),
+        _c("thead", [
+          _c("tr", [
+            _c(
+              "th",
+              {
+                staticStyle: { cursor: "pointer" },
+                on: {
+                  click: function($event) {
+                    _vm.toggleSort("id")
+                  }
+                }
+              },
+              [_vm._v("Id")]
+            ),
+            _vm._v(" "),
+            _c("th", [_vm._v("Name")]),
+            _vm._v(" "),
+            _c(
+              "th",
+              {
+                staticStyle: { cursor: "pointer" },
+                on: {
+                  click: function($event) {
+                    _vm.toggleSort("amount")
+                  }
+                }
+              },
+              [_vm._v("Amount")]
+            ),
+            _vm._v(" "),
+            _c(
+              "th",
+              {
+                staticStyle: { cursor: "pointer" },
+                on: {
+                  click: function($event) {
+                    _vm.toggleSort("collected")
+                  }
+                }
+              },
+              [_vm._v("Collected (USD)")]
+            )
+          ])
+        ]),
         _vm._v(" "),
         _c(
           "tbody",
-          _vm._l(_vm.rewards, function(item) {
+          _vm._l(_vm.sortedRewards, function(item) {
             return _c(
               "RewardsListItem",
               _vm._b({ key: item.id }, "RewardsListItem", item, false)
@@ -30918,24 +30990,7 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("Id")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Amount")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Collected (USD)")])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
