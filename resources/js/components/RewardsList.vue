@@ -33,6 +33,8 @@ export default {
   },
   created() {
     this.fetchRewards();
+  },
+  mounted() {
     this.listenSocket();
   },
   beforeDestroy() {
@@ -46,7 +48,7 @@ export default {
     listenSocket() {
       socket.channel('rewards')
         .listen('RewardAmountUpdatedEvent', (event) => {
-          this.updateReward(event.reward)
+          this.updateReward(event.reward);
         });
     },
     leaveSocket() {

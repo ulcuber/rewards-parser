@@ -1905,6 +1905,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   })),
   created: function created() {
     this.fetchRewards();
+  },
+  mounted: function mounted() {
     this.listenSocket();
   },
   beforeDestroy: function beforeDestroy() {

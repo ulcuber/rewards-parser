@@ -79,13 +79,16 @@ class ParseDonationsJob implements ShouldQueue
     private function createDonations(array $items): void
     {
         foreach ($items as $item) {
+            $rewardId = $item['rewardId'] ?? null;
             $donation = Donation::firstOrCreate([
                 'id' => $item['id'],
             ], [
                 'amount' => $item['amount'],
-                'reward_id' => $item['rewardId'] ?? null,
+                'reward_id' => $rewardId,
             ]);
-            RewardAmountUpdatedEvent::dispatch($donation);
+            if ($rewardId) {
+                RewardAmountUpdatedEvent::dispatch($donation);
+            }
         }
     }
 

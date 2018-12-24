@@ -10,6 +10,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
+use App\Models\Reward;
 use App\Models\Donation;
 
 class RewardAmountUpdatedEvent implements ShouldBroadcast
@@ -32,6 +33,11 @@ class RewardAmountUpdatedEvent implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        return ['reward' => $this->donation->reward()->withCollected()->first()];
+        return ['reward' => $this->getReward()];
+    }
+
+    private function getReward(): Reward
+    {
+        return $this->donation->reward()->withCollected()->first();
     }
 }
